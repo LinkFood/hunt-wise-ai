@@ -24,6 +24,15 @@ const Index = () => {
     }
   }, [user, zipCode]);
 
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   if (showDashboard && zipCode) {
     return <Dashboard zipCode={zipCode} />;
   }

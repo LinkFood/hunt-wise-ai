@@ -48,6 +48,15 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
     }
   };
 
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground">Loading Hunt Wise AI...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
