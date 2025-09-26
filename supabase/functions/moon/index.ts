@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.140.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,28 +13,22 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const dateParam = url.pathname.split('/').pop() || new Date().toISOString().split('T')[0];
-
-    console.log(`Fetching moon phase for date: ${dateParam}`);
-
-    // Mock moon phase data - in production, integrate with USNO API
-    const phases = ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'];
-    const randomPhase = phases[Math.floor(Math.random() * phases.length)];
-    const illumination = Math.floor(Math.random() * 100);
-
-    const mockMoonData = {
-      date: dateParam,
-      phase: randomPhase,
-      illumination,
-      moonrise: '18:30',
-      moonset: '06:15',
-      huntingImpact: illumination > 75 ? 'Reduced night activity' : illumination < 25 ? 'Increased dawn/dusk activity' : 'Normal activity patterns',
-      optimalTimes: ['05:30-07:00', '17:30-19:00'],
+    const date = url.pathname.split("/")[2] || new Date().toISOString().split("T")[0];
+    
+    console.log(`Fetching moon phase for date: ${date}`);
+    
+    const res = await fetch(`https://api.usno.navy.mil/moon/phase?date=${date}`);
+    const data = await res.json();
+    
+    const moonData = { 
+      phase: data.phasedata[0].phase, 
+      illumination: data.phasedata[0].illumination,
+      date: date,
       lastUpdated: new Date().toISOString()
     };
-
-    return new Response(JSON.stringify(mockMoonData), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    
+    return new Response(JSON.stringify(moonData), {
+      headers: { ...corsHeaders, "content-type": "application/json" },
     });
   } catch (error: unknown) {
     console.error('Error in moon function:', error);
