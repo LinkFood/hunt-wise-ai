@@ -283,7 +283,7 @@ const calculateAdvancedPrediction = async (zipCode: string, date: string, supaba
       recommendations: generateRecommendations(finalScore, temperature, windSpeed, moonIllumination),
       
       // AI model metadata
-      aiModel: 'Hunt Wise Advanced Prediction Engine v3.0',
+      aiModel: 'Hunt Wet Advanced Prediction Engine v3.0',
       dataIntegration: {
         moonPhase: moonRes ? 'USNO Real Data' : 'Simulated',
         weather: weatherPointRes ? 'National Weather Service' : 'Simulated', 

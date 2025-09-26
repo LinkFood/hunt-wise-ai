@@ -247,7 +247,7 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Activity className="w-8 h-8 text-primary animate-spin mx-auto mb-2" />
-          <div className="text-foreground">Loading Hunt Wise AI...</div>
+          <div className="text-foreground">Loading Hunt Wet AI...</div>
         </div>
       </div>
     );
@@ -259,10 +259,10 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Hunt Wise AI</h1>
+            <h1 className="text-2xl font-bold text-foreground">Hunt Wet AI</h1>
             <p className="text-muted-foreground">ZIP: {zipCode}</p>
             {user && (
-              <p className="text-sm text-muted-foreground">Welcome back, {user.email}</p>
+              <p className="text-sm text-muted-foreground">Welcome to Hunt Wet, {user.email}</p>
             )}
           </div>
           <div className="flex items-center gap-3">

@@ -121,7 +121,7 @@ serve(async (req) => {
         forecast: forecastData.properties.periods.slice(0, 3),
         coordinates: { lat: parseFloat(lat), lon: parseFloat(lon) },
         lastUpdated: new Date().toISOString(),
-        source: 'National Weather Service'
+        source: 'National Weather Service for Hunt Wet'
       };
 
       return new Response(JSON.stringify(weatherData), {
@@ -158,7 +158,7 @@ serve(async (req) => {
           'Monitor barometric pressure changes'
         ],
         lastUpdated: new Date().toISOString(),
-        source: 'Simulated Data'
+        source: 'Hunt Wet Simulated Data'
       };
 
       return new Response(JSON.stringify(simulatedWeatherData), {
