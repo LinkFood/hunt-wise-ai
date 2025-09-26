@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   Brain, 
   Users, 
@@ -11,7 +15,10 @@ import {
   CloudRain,
   Moon,
   Scale,
-  Target
+  Target,
+  LogOut,
+  Mic,
+  ExternalLink
 } from "lucide-react";
 import { MoonPhase } from "@/components/MoonPhase";
 
@@ -24,6 +31,22 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
     phase: "Waxing Crescent",
     illumination: 12
   });
+  const { user, loading } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -31,13 +54,55 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Hunt Intel</h1>
+            <h1 className="text-3xl font-bold text-foreground">Hunt Wise AI</h1>
             <p className="text-muted-foreground">ZIP: {zipCode}</p>
+            {user && (
+              <p className="text-sm text-muted-foreground">Welcome back, {user.email}</p>
+            )}
           </div>
-          <Button variant="outline" className="gap-2">
-            <Crown className="w-4 h-4" />
-            Upgrade to Pro
-          </Button>
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <Button variant="outline" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Upgrade to Pro
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline">
+                  Sign In
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-center">
+          <div className="flex gap-2 bg-card/50 p-2 rounded-lg">
+            <Link to="/trophies">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Trophy className="w-4 h-4" />
+                Trophies
+              </Button>
+            </Link>
+            <Link to="/clubs-leases">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Users className="w-4 h-4" />
+                Clubs
+              </Button>
+            </Link>
+            <Link to="/chat">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Chat
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* AI Briefing Card */}
@@ -80,10 +145,29 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
                 illumination={currentMoonPhase.illumination}
                 className="mb-2"
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-3">
                 Optimal hunting conditions expected during early morning hours. 
                 Game activity predicted to be high near feeding areas.
               </p>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Mic className="w-4 h-4" />
+                Voice Mode (Premium)
+              </Button>
+            </div>
+            
+            {/* Affiliate Links Section */}
+            <div className="border-t border-border pt-4">
+              <h4 className="text-sm font-medium text-foreground mb-3">Recommended Gear</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm" className="justify-start gap-2">
+                  <ExternalLink className="w-3 h-3" />
+                  Cabela's
+                </Button>
+                <Button variant="outline" size="sm" className="justify-start gap-2">
+                  <ExternalLink className="w-3 h-3" />
+                  Bass Pro
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -110,9 +194,11 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
                   <p className="text-xs text-muted-foreground">Members only, bow season</p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full mt-4">
-                Browse All
-              </Button>
+              <Link to="/clubs-leases">
+                <Button variant="outline" className="w-full mt-4">
+                  Browse All
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -130,9 +216,11 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
                 <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">No trophies logged yet</p>
               </div>
-              <Button variant="default" className="w-full">
-                Log New Trophy
-              </Button>
+              <Link to="/trophies">
+                <Button variant="default" className="w-full">
+                  Log New Trophy
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -155,9 +243,11 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
                   <Badge variant="outline">Live</Badge>
                 </div>
               </div>
-              <Button variant="outline" className="w-full mt-4">
-                Join Chat
-              </Button>
+              <Link to="/chat">
+                <Button variant="outline" className="w-full mt-4">
+                  Join Chat
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

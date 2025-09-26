@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MoonPhase } from "@/components/MoonPhase";
 import { ZipInput } from "@/components/ZipInput";
+import { useAuth } from "@/components/AuthProvider";
+import { Link } from "react-router-dom";
 import Dashboard from "./Dashboard";
 
 const Index = () => {
   const [zipCode, setZipCode] = useState<string>("");
   const [showDashboard, setShowDashboard] = useState(false);
+  const { user, loading } = useAuth();
 
   const handleZipSubmit = (zip: string) => {
     setZipCode(zip);
     setShowDashboard(true);
   };
+
+  useEffect(() => {
+    // Auto redirect authenticated users to dashboard if they have a zip
+    if (user && zipCode) {
+      setShowDashboard(true);
+    }
+  }, [user, zipCode]);
 
   if (showDashboard && zipCode) {
     return <Dashboard zipCode={zipCode} />;
@@ -44,10 +55,22 @@ const Index = () => {
           <CardContent className="space-y-6">
             <ZipInput onSubmit={handleZipSubmit} />
             
-            <div className="text-center">
+            <div className="text-center space-y-3">
               <p className="text-xs text-muted-foreground">
                 Get personalized hunting intel for your area
               </p>
+              {!loading && !user && (
+                <div>
+                  <Link to="/auth">
+                    <Button variant="outline" size="sm">
+                      Sign In / Sign Up
+                    </Button>
+                  </Link>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Sign in to access trophy logs, clubs, and chat
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
