@@ -51,14 +51,17 @@ serve(async (req) => {
     // Handle both URL path and POST body methods
     if (req.method === 'POST') {
       const body = await req.json();
-      zipCode = body?.zipCode;
+      zipCode = body?.zipCode || "";
     } else {
       const url = new URL(req.url);
       zipCode = url.pathname.split('/').pop() || "";
     }
 
+    console.log(`Received zipCode: "${zipCode}", method: ${req.method}`);
+
     // Input validation
     if (!zipCode || !validateZipCode(zipCode)) {
+      console.log(`ZIP validation failed for: "${zipCode}"`);
       return new Response(JSON.stringify({ 
         error: 'Invalid ZIP code format. Must be 5 digits.' 
       }), {

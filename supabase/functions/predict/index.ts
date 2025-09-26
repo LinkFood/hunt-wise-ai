@@ -336,19 +336,22 @@ serve(async (req) => {
     // Handle both URL path and POST body methods
     if (req.method === 'POST') {
       const body = await req.json();
-      zipCode = body?.zipCode;
+      zipCode = body?.zipCode || "";
       if (body?.date) {
         date = body.date;
       }
     } else {
       const url = new URL(req.url);
       const pathParts = url.pathname.split('/').filter(part => part);
-      zipCode = pathParts[pathParts.length - 2];
+      zipCode = pathParts[pathParts.length - 2] || "";
       date = pathParts[pathParts.length - 1] || date;
     }
 
+    console.log(`Received zipCode: "${zipCode}", date: "${date}", method: ${req.method}`);
+
     // Input validation
     if (!zipCode || !validateZipCode(zipCode)) {
+      console.log(`ZIP validation failed for: "${zipCode}"`);
       return new Response(JSON.stringify({ 
         error: 'Invalid ZIP code format. Must be 5 digits.' 
       }), {
@@ -358,6 +361,7 @@ serve(async (req) => {
     }
 
     if (!validateDate(date)) {
+      console.log(`Date validation failed for: "${date}"`);
       return new Response(JSON.stringify({ 
         error: 'Invalid date format. Must be YYYY-MM-DD.' 
       }), {

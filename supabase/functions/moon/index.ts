@@ -49,7 +49,8 @@ serve(async (req) => {
         throw new Error("Invalid moon phase data received");
       }
     } catch (apiError) {
-      console.log("Moon API unavailable, using fallback data");
+      console.log("Moon API unavailable, using fallback data:", apiError);
+      
       // Fallback moon data
       const fallbackData = {
         phase: "Waxing Crescent",
