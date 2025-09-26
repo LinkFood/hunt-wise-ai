@@ -9,9 +9,17 @@ import Auth from "./pages/Auth";
 import TrophyLogbook from "./pages/TrophyLogbook";
 import ClubsLeases from "./pages/ClubsLeases";
 import Chat from "./pages/Chat";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+// Dashboard wrapper to extract ZIP from query params
+const DashboardWrapper = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const zipCode = urlParams.get('zip') || '12345'; // fallback ZIP
+  return <Dashboard zipCode={zipCode} />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,6 +30,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<DashboardWrapper />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/trophies" element={<TrophyLogbook />} />
             <Route path="/clubs-leases" element={<ClubsLeases />} />
