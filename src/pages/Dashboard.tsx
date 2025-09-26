@@ -36,6 +36,7 @@ interface MoonData {
   illumination: number;
   date?: string;
   error?: string;
+  fallback?: boolean;
 }
 
 interface PredictionData {
@@ -95,29 +96,31 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
           })
         ]);
 
-        // Process moon data
-        if (moonResponse.data) {
+        // Process moon data with better error handling
+        if (moonResponse.data && !moonResponse.error) {
           setMoonData({
             phase: moonResponse.data.phase || "Waxing Crescent",
             illumination: moonResponse.data.illumination || 12,
-            date: moonResponse.data.date
+            date: moonResponse.data.date || today,
+            fallback: moonResponse.data.fallback || false
           });
-        } else if (moonResponse.error) {
-          console.error('Moon API error:', moonResponse.error);
+        } else {
+          console.log('Moon API fallback used');
           setMoonData({
             phase: "Waxing Crescent", 
             illumination: 12,
-            error: 'Unable to load moon data'
+            date: today,
+            fallback: true
           });
         }
 
         // Process prediction data  
-        if (predictionResponse.data) {
+        if (predictionResponse.data && !predictionResponse.error) {
           setPredictionData(predictionResponse.data);
-        } else if (predictionResponse.error) {
-          console.error('Prediction API error:', predictionResponse.error);
+        } else {
+          console.log('Prediction API fallback used');
           setPredictionData({
-            gameActivityScore: 65,
+            gameActivityScore: 75,
             activityLevel: 'Moderate',
             confidence: 75,
             error: 'Using fallback predictions'
@@ -125,10 +128,10 @@ const Dashboard = ({ zipCode }: DashboardProps) => {
         }
 
         // Process weather data
-        if (weatherResponse.data) {
+        if (weatherResponse.data && !weatherResponse.error) {
           setWeatherData(weatherResponse.data);
-        } else if (weatherResponse.error) {
-          console.error('Weather API error:', weatherResponse.error);
+        } else {
+          console.log('Weather API fallback used');
           setWeatherData({
             temperature: 45,
             condition: 'Partly Cloudy',

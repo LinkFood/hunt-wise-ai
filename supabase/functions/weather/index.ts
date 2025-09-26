@@ -46,8 +46,16 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const zipCode = url.pathname.split('/').pop();
+    let zipCode: string;
+    
+    // Handle both URL path and POST body methods
+    if (req.method === 'POST') {
+      const body = await req.json();
+      zipCode = body?.zipCode;
+    } else {
+      const url = new URL(req.url);
+      zipCode = url.pathname.split('/').pop() || "";
+    }
 
     // Input validation
     if (!zipCode || !validateZipCode(zipCode)) {

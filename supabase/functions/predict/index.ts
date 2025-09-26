@@ -330,10 +330,22 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split('/').filter(part => part);
-    const zipCode = pathParts[pathParts.length - 2];
-    const date = pathParts[pathParts.length - 1] || new Date().toISOString().split('T')[0];
+    let zipCode: string;
+    let date: string = new Date().toISOString().split('T')[0];
+    
+    // Handle both URL path and POST body methods
+    if (req.method === 'POST') {
+      const body = await req.json();
+      zipCode = body?.zipCode;
+      if (body?.date) {
+        date = body.date;
+      }
+    } else {
+      const url = new URL(req.url);
+      const pathParts = url.pathname.split('/').filter(part => part);
+      zipCode = pathParts[pathParts.length - 2];
+      date = pathParts[pathParts.length - 1] || date;
+    }
 
     // Input validation
     if (!zipCode || !validateZipCode(zipCode)) {
